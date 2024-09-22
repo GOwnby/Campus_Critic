@@ -1,7 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
-import requests
+from security import safe_requests
 
 # Initialize Google Maps API Key
 MAPS_KEY = "AIzaSyAI5kG4qxfsry5Tnw09xQmmm5elqU3TKxk"
@@ -17,7 +17,7 @@ types = ['restaurant', 'hair_care', 'car_repair']
 
 # Get photos for each place
 def getPhoto(place_id):
-    response = requests.get(f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&fields=photo&key={MAPS_KEY}")
+    response = safe_requests.get(f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&fields=photo&key={MAPS_KEY}")
     result = response.json()['result']
     if 'photos' not in result:
         return "N/A"
@@ -25,7 +25,7 @@ def getPhoto(place_id):
     return photo_reference
 
 def getReviews(place_id):
-    response = requests.get(f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&fields=reviews&key={MAPS_KEY}")
+    response = safe_requests.get(f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&fields=reviews&key={MAPS_KEY}")
     result = response.json()['result']
     if 'reviews' not in result:
         return "N/A"
@@ -45,7 +45,7 @@ def getReviews(place_id):
 for college in colleges:
     for type in types:
         cords = f"{colleges[college]['lat']}%2C{colleges[college]['lon']}"
-        response = requests.get(f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?radius=2500&type={type}&key={MAPS_KEY}&location={cords}")
+        response = safe_requests.get(f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?radius=2500&type={type}&key={MAPS_KEY}&location={cords}")
         results = response.json()['results']
 
         for result in results:
