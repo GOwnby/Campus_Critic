@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, app, request
 import requests
+from security import safe_requests
 
 location = "Norman,OK"
 type = "restaurant"
@@ -12,7 +13,7 @@ lon = geoResponse.json()['results'][0]['geometry']['location']['lng'].__str__()
 
 cords = lat + '%2C' + lon
 print(cords)
-response = requests.get(f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?radius=2500&keyword={type}&key={MAPS_API_KEY}&location={cords}")
+response = safe_requests.get(f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?radius=2500&keyword={type}&key={MAPS_API_KEY}&location={cords}")
 results = response.json()['results']
 
 places = []
