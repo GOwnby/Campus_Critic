@@ -1,12 +1,13 @@
 from flask import Flask, jsonify, app, request
 from flask_cors import CORS, cross_origin
-import requests
 
 import google.generativeai as genai
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin.firestore import FieldFilter
+from security import safe_requests
+
 #from models import restaurants, reviews
 # Use models with fields generated in a SQL database, requires Firebase update / functionality review
 
@@ -25,14 +26,14 @@ def get_restaurants(request):
     location = data.get("city").__str__()
     type = data.get("type").__str__()
     
-    geoResponse = requests.get(f"https://maps.googleapis.com/maps/api/geocode/json?address={location}&key={MAPS_API_KEY}")
+    geoResponse = safe_requests.get(f"https://maps.googleapis.com/maps/api/geocode/json?address={location}&key={MAPS_API_KEY}")
 
     lat = geoResponse.json()['results'][0]['geometry']['location']['lat'].__str__()
     lon = geoResponse.json()['results'][0]['geometry']['location']['lng'].__str__()
 
     cords = lat + '%2C' + lon
 
-    response = requests.get(f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?radius=2500&keyword={type}&key={MAPS_API_KEY}&location={cords}")
+    response = safe_requests.get(f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?radius=2500&keyword={type}&key={MAPS_API_KEY}&location={cords}")
     results = response.json()['results']
  
     places = []
